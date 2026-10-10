@@ -50,7 +50,7 @@ npm test
 npm run dev
 ```
 
-Visit **[http://localhost:3000](https://teamtaskassignment-henna.vercel.app/)** in your browser.
+Visit **[teamtaskassignment-henna.vercel.app](https://teamtaskassignment-henna.vercel.app/)** in your browser.
 
 ---
 
