@@ -2,6 +2,9 @@
 
 A focused, high-performance team sprint task dashboard built with Next.js App Router, TypeScript, Tailwind CSS, TanStack Query v5, and Zustand.
 
+- **Live Demo**: [https://teamtaskassignment-henna.vercel.app/](https://teamtaskassignment-henna.vercel.app/)
+- **GitHub Repository**: [https://github.com/Rishit-07/Team__Task_Assignment](https://github.com/Rishit-07/Team__Task_Assignment)
+
 The project prioritizes a dependable, responsive, and well-tested core workspace: optimistic status mutations with instant snapshot rollback on network failures, synchronized Kanban board and tabular views, debounced search, multi-criteria filtering, shareable URL query persistence, and chaos testing controls.
 
 ---
