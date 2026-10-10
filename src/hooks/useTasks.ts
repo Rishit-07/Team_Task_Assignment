@@ -10,22 +10,29 @@ import {
 } from "@/lib/api";
 import { usePreferencesStore } from "@/store/usePreferencesStore";
 import {
+  Assignee,
   PaginatedTasksResponse,
   Task,
   TaskFilterParams,
 } from "@/types/task";
 
-export function useTasks(filters: TaskFilterParams = {}) {
+export function useTasks(
+  filters: TaskFilterParams = {},
+  initialData?: PaginatedTasksResponse
+) {
   return useQuery({
     queryKey: ["tasks", filters],
     queryFn: () => fetchTasks(filters),
+    initialData,
+    staleTime: 1000 * 30,
   });
 }
 
-export function useAssignees() {
+export function useAssignees(initialData?: Assignee[]) {
   return useQuery({
     queryKey: ["assignees"],
     queryFn: fetchAssignees,
+    initialData,
     staleTime: 1000 * 60 * 10,
   });
 }
@@ -45,15 +52,12 @@ export function useUpdateTask() {
       updateTaskApi(id, updates, failMutations),
 
     onMutate: async ({ id, updates }) => {
-      // Cancel any outgoing refetches so they don't overwrite our optimistic update
       await queryClient.cancelQueries({ queryKey: ["tasks"] });
 
-      // Snapshot all existing query caches matching ['tasks']
       const previousQueries = queryClient.getQueriesData<PaginatedTasksResponse>({
         queryKey: ["tasks"],
       });
 
-      // Optimistically update every cached page/filter list
       queryClient.setQueriesData<PaginatedTasksResponse>(
         { queryKey: ["tasks"] },
         (oldData) => {
@@ -70,12 +74,15 @@ export function useUpdateTask() {
             return item;
           });
 
-          // Recompute facet counts if status or priority changed
           const newStatusCounts = { ...oldData.countsByStatus };
           const newPriorityCounts = { ...oldData.countsByPriority };
 
           const originalItem = oldData.items.find((item) => item.id === id);
-          if (originalItem && updates.status && originalItem.status !== updates.status) {
+          if (
+            originalItem &&
+            updates.status &&
+            originalItem.status !== updates.status
+          ) {
             newStatusCounts[originalItem.status] = Math.max(
               0,
               (newStatusCounts[originalItem.status] || 1) - 1
@@ -106,12 +113,10 @@ export function useUpdateTask() {
         }
       );
 
-      // Return context with snapshots for rollback
       return { previousQueries };
     },
 
     onError: (error, variables, context) => {
-      // Revert every cached query to its prior snapshot
       if (context?.previousQueries) {
         context.previousQueries.forEach(([queryKey, previousData]) => {
           queryClient.setQueryData(queryKey, previousData);
@@ -120,13 +125,14 @@ export function useUpdateTask() {
 
       showToast({
         title: "Update Reverted",
-        description: error.message || "Simulated network failure. Task restored to prior state.",
+        description:
+          error.message ||
+          "Simulated network failure. Task restored to prior state.",
         type: "rollback",
       });
     },
 
     onSettled: () => {
-      // Sync cache with backend state
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
     },
   });
@@ -205,7 +211,8 @@ export function useDeleteTask() {
 
       showToast({
         title: "Deletion Failed",
-        description: error.message || "Simulated network failure. Task restored.",
+        description:
+          error.message || "Simulated network failure. Task restored.",
         type: "rollback",
       });
     },

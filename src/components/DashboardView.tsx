@@ -4,7 +4,13 @@ import React, { useState, useTransition } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useAssignees, useTasks } from "@/hooks/useTasks";
 import { usePreferencesStore } from "@/store/usePreferencesStore";
-import { TaskFilterParams, TaskPriority, TaskStatus } from "@/types/task";
+import {
+  Assignee,
+  PaginatedTasksResponse,
+  TaskFilterParams,
+  TaskPriority,
+  TaskStatus,
+} from "@/types/task";
 import KanbanBoard from "./KanbanBoard";
 import TaskTable from "./TaskTable";
 import CreateTaskModal from "./CreateTaskModal";
@@ -25,7 +31,15 @@ import {
 } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 
-export default function DashboardView() {
+interface DashboardViewProps {
+  initialTasks?: PaginatedTasksResponse;
+  initialAssignees?: Assignee[];
+}
+
+export default function DashboardView({
+  initialTasks,
+  initialAssignees = [],
+}: DashboardViewProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -78,8 +92,8 @@ export default function DashboardView() {
     isError,
     error,
     refetch,
-  } = useTasks(filters);
-  const { data: assignees = [] } = useAssignees();
+  } = useTasks(filters, initialTasks);
+  const { data: assignees = initialAssignees } = useAssignees(initialAssignees);
 
   const [searchInput, setSearchInput] = useState(urlSearch);
 
@@ -125,10 +139,11 @@ export default function DashboardView() {
   };
 
   // Metrics
-  const total = tasksData?.total ?? 105;
-  const inProgressCount = tasksData?.countsByStatus?.in_progress ?? 28;
-  const inReviewCount = tasksData?.countsByStatus?.in_review ?? 14;
-  const doneCount = tasksData?.countsByStatus?.done ?? 42;
+  const activeData = tasksData || initialTasks;
+  const total = activeData?.total ?? 105;
+  const inProgressCount = activeData?.countsByStatus?.in_progress ?? 28;
+  const inReviewCount = activeData?.countsByStatus?.in_review ?? 14;
+  const doneCount = activeData?.countsByStatus?.done ?? 42;
 
   return (
     <div className="min-h-screen bg-[#f6f8f7] text-slate-800">
@@ -194,7 +209,7 @@ export default function DashboardView() {
                     : "Fault Simulation Disabled",
                   description: !failMutations
                     ? "Next mutation will reject with simulated 500 error to test rollback."
-                    : "Mutations will now succeed normally.",
+                    : "Mutations will now persist normally.",
                   type: !failMutations ? "rollback" : "info",
                 });
               }}
@@ -476,9 +491,9 @@ export default function DashboardView() {
 
         {/* Main Work Area: Kanban or Table */}
         <section className="pt-2">
-          {isLoading ? (
+          {isLoading && !activeData ? (
             <TaskSkeleton viewMode={viewMode} />
-          ) : isError ? (
+          ) : isError && !activeData ? (
             <ErrorState
               message={
                 error instanceof Error
@@ -488,11 +503,11 @@ export default function DashboardView() {
               onRetry={() => refetch()}
             />
           ) : viewMode === "kanban" ? (
-            <KanbanBoard tasks={tasksData?.items || []} />
+            <KanbanBoard tasks={activeData?.items || []} />
           ) : (
             <TaskTable
               data={
-                tasksData || {
+                activeData || {
                   items: [],
                   total: 0,
                   page: 1,
