@@ -157,7 +157,7 @@ export default function DashboardView({
                 <Activity className="w-4 h-4 text-emerald-400" />
               </div>
               <span className="font-extrabold text-slate-900 text-sm tracking-tight">
-                NovaBoard
+                Task Workspace
               </span>
             </div>
 
@@ -248,19 +248,19 @@ export default function DashboardView({
         <section className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-              NovaBoard Mobile & Core Engine
+              Team Task Dashboard
             </h1>
             <div className="flex flex-wrap items-center gap-2 mt-1.5 text-xs text-slate-500">
-              <span>Client: Arcadia Solutions</span>
+              <span>Sprint Operations</span>
               <span>•</span>
-              <span>Timeline: May 20 – June 30, 2025</span>
+              <span>105 Seeded Tasks</span>
               <span>•</span>
               <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">
                 In Progress
               </span>
               <span>•</span>
               <span className="text-emerald-700 font-semibold">
-                Sprint 28 Cycle Parity
+                Synchronized Workspace
               </span>
             </div>
           </div>

@@ -1,4 +1,4 @@
-# NovaBoard Sprint Task Dashboard
+# Team Task Dashboard
 
 A focused, high-performance team sprint task dashboard built with Next.js App Router, TypeScript, Tailwind CSS, TanStack Query v5, and Zustand.
 
@@ -56,7 +56,7 @@ Visit **http://localhost:3000** in your browser.
 Per project requirements to prioritize a working, tested core and honestly disclose incomplete items:
 
 ### Completed & Working Core Features
-1. **NovaBoard Task Dashboard**: Full-width focused workspace featuring metric overview cards, view toggling, and 4 colored Kanban lanes.
+1. **Interactive Task Dashboard**: Full-width focused workspace featuring metric overview cards, view toggling, and 4 colored Kanban lanes.
 2. **105 Seeded Synthetic Tasks**: Complete engineering dataset across realistic priorities and milestones.
 3. **Optimistic Updates & Rollback**: Instant status progression with automatic rollback on network failure.
 4. **Chaos Testing Controls**: Interactive **Fault Sim: Off/On** switch, delay selector (0ms, 300ms, 800ms), and **Reset 105 Tasks** button directly in the top header.
@@ -90,7 +90,7 @@ The following interactive elements currently present on the dashboard are visual
 - Vitest suites verifying optimistic updates and cache reversal upon network error.
 
 ### Developer 3: UI, Accessibility & Views
-- NovaBoard layout implementation, metric banners, and view switcher.
+- Task dashboard layout implementation, metric banners, and view switcher.
 - Drag-and-drop Kanban board with keyboard-friendly action buttons.
 - Data table component with sortable headers and pagination controls.
 - Keyboard focus management and WCAG accessibility standards.

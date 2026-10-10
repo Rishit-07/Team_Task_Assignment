@@ -3,9 +3,9 @@ import "./globals.css";
 import QueryProvider from "@/components/providers/QueryProvider";
 
 export const metadata: Metadata = {
-  title: "NovaBoard Mobile & Core Engine | Sprint 28",
+  title: "Team Task Dashboard",
   description:
-    "Engineering sprint task dashboard featuring optimistic updates, rollback resilience, and synchronized Kanban board.",
+    "Engineering task dashboard featuring optimistic updates, rollback resilience, and synchronized Kanban board.",
 };
 
 export default function RootLayout({
