@@ -1,8 +1,8 @@
-# NovaBoard Mobile & Core Engine - Sprint Task Dashboard
+# NovaBoard Sprint Task Dashboard
 
-A high-performance team sprint task dashboard built with Next.js App Router, TypeScript, Tailwind CSS, TanStack Query v5, and Zustand.
+A focused, high-performance team sprint task dashboard built with Next.js App Router, TypeScript, Tailwind CSS, TanStack Query v5, and Zustand.
 
-The user interface is modeled directly after the **NovaBoard / Donezo Sprint Engine** reference layout, focusing on a dependable, responsive, and thoroughly tested core.
+The project prioritizes a dependable, responsive, and well-tested core workspace: optimistic status mutations with instant snapshot rollback on network failures, synchronized Kanban board and tabular views, debounced search, multi-criteria filtering, shareable URL query persistence, and chaos testing controls.
 
 ---
 
@@ -10,9 +10,9 @@ The user interface is modeled directly after the **NovaBoard / Donezo Sprint Eng
 
 ### Server State & Optimistic UI (TanStack Query v5)
 - **Cache Strategy**: Queries are keyed deterministically by filter criteria (`['tasks', filters]`).
-- **Optimistic Mutations**: Status moves (via drag-and-drop, quick action buttons, or inline dropdowns) immediately update the client cache.
+- **Optimistic Mutations**: Status changes (via drag-and-drop, quick action buttons, or inline table dropdowns) immediately update the client cache.
 - **Rollback on Failure**: When mutations fail (or when the **Fault Sim** toggle is active), the prior cache snapshot is restored, and an alert notifies the user that the action was reverted.
-- **Cache Parity**: Updates made on the Kanban board immediately synchronize with the List/Table view and top-level metric counters.
+- **Cache Parity**: Updates made on the Kanban board immediately synchronize with the Table view and top-level metric counters.
 
 ### Local Client State (Zustand)
 - Manages active view preferences (`kanban` vs `table`), chaos engineering toggles (`failMutations`), and network delay parameters (`latencyMs`) with local storage persistence.
@@ -51,30 +51,32 @@ Visit **http://localhost:3000** in your browser.
 
 ---
 
-## 3. Honest Status: Completed vs Intentionally Omitted Scope
+## 3. Honest Status: Completed Features vs Incomplete / Omitted Scope
 
-Per user instruction to prioritize a rock-solid working core and be transparent about incomplete or excluded items:
+Per project requirements to prioritize a working, tested core and honestly disclose incomplete items:
 
-### Completed & Working Features
-1. **NovaBoard Reference Design**: Sidebar, top navigation, metrics cards, view tabs, and 4 colored Kanban lanes matching the reference layout.
-2. **105 Seeded Synthetic Tasks**: Complete dataset spanning real engineering scenarios.
-3. **Optimistic Updates & Rollback**: Instant status progression with rollback if the API fails.
-4. **Chaos Testing Controls**: Interactive **Fault Sim: Off/On** switch, delay selector (0ms, 300ms, 800ms), and **Seed 105** reset button in the top bar.
-5. **Synchronized Board & List Views**: Switching between **Board** and **List** tabs maintains identical task states and counts.
+### Completed & Working Core Features
+1. **NovaBoard Task Dashboard**: Full-width focused workspace featuring metric overview cards, view toggling, and 4 colored Kanban lanes.
+2. **105 Seeded Synthetic Tasks**: Complete engineering dataset across realistic priorities and milestones.
+3. **Optimistic Updates & Rollback**: Instant status progression with automatic rollback on network failure.
+4. **Chaos Testing Controls**: Interactive **Fault Sim: Off/On** switch, delay selector (0ms, 300ms, 800ms), and **Reset 105 Tasks** button directly in the top header.
+5. **Synchronized Board & Table Views**: Switching between **Board View** and **Table View** maintains identical task states and counts.
 6. **Accessible Keyboard Controls**: Action buttons on every card (`Move to In Progress ->`, etc.) and dropdown selectors enable complete keyboard-driven navigation without a mouse.
-7. **Filter & Search Synchronization**: Debounced search input, multi-faceted filtering, and URL query parameter reflection.
-8. **Validated Task Creation**: Dialog with schema validation for title, description, priority, and due date.
+7. **Filter & Search Synchronization**: Debounced search input, multi-faceted filtering (status, priority, assignee), and URL query parameter reflection.
+8. **Validated Task Creation**: Modal dialog with Zod schema validation for title, description, priority, and due date.
 9. **Automated Test Suite**: 9 passing tests in Vitest covering combined filters, optimistic mutation rollback, and cross-view cache parity.
 
-### Intentionally Omitted / Incomplete Scope
-As agreed, the following secondary widgets and sub-pages were omitted to maintain a clean, stable core:
-- **Standalone Settings & Profile Pages**: Settings and profile buttons are visual indicators in the navigation bar and do not navigate to separate sub-routes.
-- **Standalone Notifications Component**: In-app notifications use toast alert banners for rollback/success rather than a full inbox screen.
-- **Active Sprint Focus Timer**: The standalone live countdown clock widget was not implemented.
-- **Upcoming Sync Meeting Widget**: The Google Meet quick-action card was omitted.
-- **Circular Sprint Progression Chart**: Progress is tracked via linear percentage indicators rather than an SVG radial donut chart.
-- **External Database & Authentication**: The mock layer runs in-memory with zero external database dependencies.
-- **WebSockets**: State updates rely on TanStack Query cache synchronization rather than a WebSocket server.
+### Incomplete & Intentionally Omitted Scope
+As requested to remove non-essential clutter and keep only the core working dashboard:
+- **Sidebar & Secondary Navigation**: The multi-page sidebar (Dashboard, Calendar, Analytics, Team, Preferences) was removed to focus purely on the main task board.
+- **Header Actions**: The non-functional "Share", "Settings", and "Invite People" buttons were removed.
+- **Notifications Component**: Dedicated notifications inbox was omitted in favor of inline toast feedback for optimistic rollbacks.
+- **Profile / Auth Sub-Pages**: User profile management and authentication were excluded; the app operates in an unauthenticated local evaluation environment.
+- **Active Sprint Focus Timer**: The live pomodoro countdown clock widget was not implemented.
+- **Upcoming Sync Meeting Widget**: The Google Meet join action card was not implemented.
+- **Circular Sprint Progression Chart**: Progress is shown through numerical metrics and linear indicators rather than an SVG radial donut chart.
+- **External Database**: Runs self-contained in memory without PostgreSQL or Redis dependencies.
+- **WebSockets**: State updates rely on TanStack Query cache invalidation rather than a persistent WebSocket connection.
 
 ---
 
@@ -91,7 +93,7 @@ As agreed, the following secondary widgets and sub-pages were omitted to maintai
 - Vitest suites verifying optimistic updates and cache reversal upon network error.
 
 ### Developer 3: UI, Accessibility & Views
-- NovaBoard layout implementation, responsive sidebar, metric banners, and view switcher.
+- NovaBoard layout implementation, metric banners, and view switcher.
 - Drag-and-drop Kanban board with keyboard-friendly action buttons.
 - Data table component with sortable headers and pagination controls.
 - Keyboard focus management and WCAG accessibility standards.
