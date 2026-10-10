@@ -34,10 +34,10 @@ const COLUMNS: ColumnConfig[] = [
     id: "todo",
     label: "To Do",
     dotColor: "bg-[#e11d48]",
-    bgLight: "bg-[#fff1f4]",
-    borderLight: "border-[#ffe4e9]",
-    badgeBg: "bg-white",
-    badgeText: "text-slate-600",
+    bgLight: "bg-[#fff1f4] dark:bg-[#201017]",
+    borderLight: "border-[#ffe4e9] dark:border-[#381624]",
+    badgeBg: "bg-white dark:bg-[#2c1420]",
+    badgeText: "text-slate-600 dark:text-rose-200",
     nextStatus: "in_progress",
     nextLabel: "Move to In Progress",
   },
@@ -45,10 +45,10 @@ const COLUMNS: ColumnConfig[] = [
     id: "in_progress",
     label: "In Progress",
     dotColor: "bg-[#d97706]",
-    bgLight: "bg-[#fef9ee]",
-    borderLight: "border-[#fef0d5]",
-    badgeBg: "bg-white",
-    badgeText: "text-slate-600",
+    bgLight: "bg-[#fef9ee] dark:bg-[#20180e]",
+    borderLight: "border-[#fef0d5] dark:border-[#3d2913]",
+    badgeBg: "bg-white dark:bg-[#2d1e0f]",
+    badgeText: "text-slate-600 dark:text-amber-200",
     nextStatus: "in_review",
     nextLabel: "Move to In Review",
   },
@@ -56,10 +56,10 @@ const COLUMNS: ColumnConfig[] = [
     id: "in_review",
     label: "In Review",
     dotColor: "bg-[#0284c7]",
-    bgLight: "bg-[#f0f9ff]",
-    borderLight: "border-[#e0f2fe]",
-    badgeBg: "bg-white",
-    badgeText: "text-slate-600",
+    bgLight: "bg-[#f0f9ff] dark:bg-[#0c1828]",
+    borderLight: "border-[#e0f2fe] dark:border-[#142e4c]",
+    badgeBg: "bg-white dark:bg-[#11243b]",
+    badgeText: "text-slate-600 dark:text-sky-200",
     nextStatus: "done",
     nextLabel: "Move to Completed",
   },
@@ -67,10 +67,10 @@ const COLUMNS: ColumnConfig[] = [
     id: "done",
     label: "Completed",
     dotColor: "bg-[#7c3aed]",
-    bgLight: "bg-[#f5f3ff]",
-    borderLight: "border-[#ede9fe]",
-    badgeBg: "bg-white",
-    badgeText: "text-slate-600",
+    bgLight: "bg-[#f5f3ff] dark:bg-[#18112b]",
+    borderLight: "border-[#ede9fe] dark:border-[#2f1f50]",
+    badgeBg: "bg-white dark:bg-[#23173d]",
+    badgeText: "text-slate-600 dark:text-purple-200",
     nextStatus: "in_review",
     nextLabel: "Reopen to In Review",
   },
@@ -155,13 +155,13 @@ export default function KanbanBoard({ tasks }: KanbanBoardProps) {
     switch (priority) {
       case "urgent":
       case "high":
-        return "bg-[#fee2e2] text-[#b91c1c]";
+        return "bg-[#fee2e2] dark:bg-rose-950/60 text-[#b91c1c] dark:text-rose-300 border border-transparent dark:border-rose-900/40";
       case "medium":
-        return "bg-[#dcfce7] text-[#15803d]";
+        return "bg-[#dcfce7] dark:bg-emerald-950/60 text-[#15803d] dark:text-emerald-300 border border-transparent dark:border-emerald-900/40";
       case "low":
-        return "bg-[#e0f2fe] text-[#0369a1]";
+        return "bg-[#e0f2fe] dark:bg-sky-950/60 text-[#0369a1] dark:text-sky-300 border border-transparent dark:border-sky-900/40";
       default:
-        return "bg-[#f1f5f9] text-[#475569]";
+        return "bg-[#f1f5f9] dark:bg-slate-800 text-[#475569] dark:text-slate-400 border border-transparent dark:border-slate-700";
     }
   };
 
@@ -207,27 +207,27 @@ export default function KanbanBoard({ tasks }: KanbanBoardProps) {
             <div className="flex items-center justify-between px-1.5 pb-3 mb-1">
               <div className="flex items-center gap-2">
                 <span className={`w-2.5 h-2.5 rounded-full ${column.dotColor}`} />
-                <h3 className="font-bold text-sm text-slate-800">
+                <h3 className="font-bold text-sm text-slate-800 dark:text-slate-200">
                   {column.label}
                 </h3>
-                <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-white/90 text-slate-600 shadow-2xs">
+                <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-white/90 dark:bg-[#1a2438] text-slate-600 dark:text-slate-300 border border-transparent dark:border-slate-700/60 shadow-2xs">
                   {columnTasks.length}
                 </span>
               </div>
 
               <div className="text-slate-400">
-                <MoreVertical className="w-4 h-4 cursor-pointer hover:text-slate-600" />
+                <MoreVertical className="w-4 h-4 cursor-pointer hover:text-slate-600 dark:hover:text-slate-200" />
               </div>
             </div>
 
             {/* Column Cards */}
             <div className="flex flex-col gap-3 flex-1">
               {columnTasks.length === 0 ? (
-                <div className="flex-1 flex flex-col items-center justify-center p-8 border border-dashed border-slate-300/80 rounded-2xl text-center">
-                  <p className="text-xs font-medium text-slate-500">
+                <div className="flex-1 flex flex-col items-center justify-center p-8 border border-dashed border-slate-300/80 dark:border-slate-800 rounded-2xl text-center">
+                  <p className="text-xs font-medium text-slate-500 dark:text-slate-400">
                     No tasks in this lane
                   </p>
-                  <span className="text-[11px] text-slate-400 mt-0.5">
+                  <span className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">
                     Drag items here
                   </span>
                 </div>
@@ -241,7 +241,7 @@ export default function KanbanBoard({ tasks }: KanbanBoardProps) {
                       key={task.id}
                       draggable
                       onDragStart={(e) => handleDragStart(e, task.id)}
-                      className="group bg-white rounded-2xl p-4 shadow-sm hover:shadow-md border border-slate-100 transition-all duration-150 cursor-grab active:cursor-grabbing hover:border-slate-200 relative"
+                      className="group bg-white dark:bg-[#162032] rounded-2xl p-4 shadow-sm hover:shadow-md border border-slate-100 dark:border-slate-800/90 transition-all duration-150 cursor-grab active:cursor-grabbing hover:border-slate-200 dark:hover:border-slate-700/80 relative"
                     >
                       {/* Top Row: Priority Badge & Move Dropdown */}
                       <div className="flex items-center justify-between gap-2 mb-2.5">
@@ -264,18 +264,18 @@ export default function KanbanBoard({ tasks }: KanbanBoardProps) {
                               )
                             }
                             aria-label={`Change status for ${task.title}`}
-                            className="text-[11px] font-medium bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-lg px-2 py-0.5 text-slate-600 outline-none cursor-pointer"
+                            className="text-[11px] font-medium bg-slate-50 dark:bg-[#1a263c] hover:bg-slate-100 dark:hover:bg-[#22314d] border border-slate-200 dark:border-slate-700/80 rounded-lg px-2 py-0.5 text-slate-600 dark:text-slate-200 outline-none cursor-pointer"
                           >
-                            <option value="todo">To Do</option>
-                            <option value="in_progress">In Progress</option>
-                            <option value="in_review">In Review</option>
-                            <option value="done">Completed</option>
+                            <option value="todo" className="dark:bg-[#1a263c]">To Do</option>
+                            <option value="in_progress" className="dark:bg-[#1a263c]">In Progress</option>
+                            <option value="in_review" className="dark:bg-[#1a263c]">In Review</option>
+                            <option value="done" className="dark:bg-[#1a263c]">Completed</option>
                           </select>
 
                           <button
                             onClick={() => handleDelete(task.id, task.title)}
                             aria-label={`Delete task ${task.title}`}
-                            className="opacity-0 group-hover:opacity-100 p-1 text-slate-300 hover:text-rose-500 rounded transition-opacity"
+                            className="opacity-0 group-hover:opacity-100 p-1 text-slate-300 dark:text-slate-500 hover:text-rose-500 dark:hover:text-rose-400 rounded transition-opacity"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>
@@ -283,24 +283,24 @@ export default function KanbanBoard({ tasks }: KanbanBoardProps) {
                       </div>
 
                       {/* Title */}
-                      <h4 className="font-bold text-[13px] text-slate-900 leading-snug line-clamp-2 mb-1">
+                      <h4 className="font-bold text-[13px] text-slate-900 dark:text-slate-100 leading-snug line-clamp-2 mb-1">
                         {task.title}
                       </h4>
 
                       {/* Description */}
-                      <p className="text-[11px] text-slate-500 leading-relaxed line-clamp-2 mb-3">
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed line-clamp-2 mb-3">
                         {task.description}
                       </p>
 
                       {/* Progress bar */}
                       <div className="mb-3.5">
-                        <div className="flex items-center justify-between text-[11px] font-medium text-slate-500 mb-1">
+                        <div className="flex items-center justify-between text-[11px] font-medium text-slate-500 dark:text-slate-400 mb-1">
                           <span>Progress</span>
-                          <span className="font-semibold text-slate-700">
+                          <span className="font-semibold text-slate-700 dark:text-slate-200">
                             {progress}%
                           </span>
                         </div>
-                        <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                        <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden">
                           <div
                             className={`h-full rounded-full transition-all duration-300 ${
                               task.status === "done"
@@ -313,26 +313,26 @@ export default function KanbanBoard({ tasks }: KanbanBoardProps) {
                       </div>
 
                       {/* Bottom Row: Assignee & Meta counts */}
-                      <div className="flex items-center justify-between pt-2 border-t border-slate-50 text-[11px] text-slate-400">
+                      <div className="flex items-center justify-between pt-2 border-t border-slate-50 dark:border-slate-800/80 text-[11px] text-slate-400 dark:text-slate-500">
                         <div className="flex items-center gap-2">
                           <div
-                            className="w-6 h-6 rounded-full bg-slate-900 text-white font-bold text-[10px] flex items-center justify-center ring-2 ring-white"
+                            className="w-6 h-6 rounded-full bg-slate-900 text-white font-bold text-[10px] flex items-center justify-center ring-2 ring-white dark:ring-[#162032]"
                             title={task.assignee.name}
                           >
                             {initials}
                           </div>
-                          <span className="text-[11px] font-medium text-slate-600 truncate max-w-[90px]">
+                          <span className="text-[11px] font-medium text-slate-600 dark:text-slate-300 truncate max-w-[90px]">
                             {task.assignee.name.split(" ")[0]}
                           </span>
                         </div>
 
                         <div className="flex items-center gap-2.5">
                           <span className="flex items-center gap-1">
-                            <Paperclip className="w-3 h-3" />
+                            <Paperclip className="w-3 h-3 text-slate-400 dark:text-slate-500" />
                             <span>1</span>
                           </span>
                           <span className="flex items-center gap-1">
-                            <MessageSquare className="w-3 h-3" />
+                            <MessageSquare className="w-3 h-3 text-slate-400 dark:text-slate-500" />
                             <span>3</span>
                           </span>
                         </div>
@@ -344,10 +344,10 @@ export default function KanbanBoard({ tasks }: KanbanBoardProps) {
                           onClick={() =>
                             handleMoveStatus(task.id, column.nextStatus!)
                           }
-                          className="mt-3 w-full py-1.5 px-3 rounded-xl border border-slate-200 hover:border-slate-300 bg-slate-50/60 hover:bg-slate-100 text-slate-700 text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-colors"
+                          className="mt-3 w-full py-1.5 px-3 rounded-xl border border-slate-200 dark:border-slate-700/80 hover:border-slate-300 dark:hover:border-slate-600 bg-slate-50/60 dark:bg-[#1c2940] hover:bg-slate-100 dark:hover:bg-[#23334f] text-slate-700 dark:text-slate-200 text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-colors"
                         >
                           <span>{column.nextLabel}</span>
-                          <ArrowRight className="w-3 h-3 text-slate-400" />
+                          <ArrowRight className="w-3 h-3 text-slate-400 dark:text-slate-500" />
                         </button>
                       )}
                     </div>

@@ -29,7 +29,7 @@ interface PreferencesState {
 export const usePreferencesStore = create<PreferencesState>()(
   persist(
     (set) => ({
-      theme: "dark",
+      theme: "light",
       viewMode: "kanban",
       failMutations: false,
       latencyMs: 300,

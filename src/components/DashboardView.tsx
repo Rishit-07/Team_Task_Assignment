@@ -24,9 +24,11 @@ import {
   Clock,
   Columns3,
   Filter,
+  Moon,
   Plus,
   RefreshCw,
   Search,
+  Sun,
   Table as TableIcon,
 } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -47,6 +49,8 @@ export default function DashboardView({
   const [, startTransition] = useTransition();
 
   const {
+    theme,
+    toggleTheme,
     viewMode,
     setViewMode,
     failMutations,
@@ -146,56 +150,76 @@ export default function DashboardView({
   const doneCount = activeData?.countsByStatus?.done ?? 42;
 
   return (
-    <div className="min-h-screen bg-[#f6f8f7] text-slate-800">
+    <div className="min-h-screen bg-[#f6f8f7] dark:bg-[#090d16] text-slate-800 dark:text-slate-100 transition-colors duration-200">
       {/* Top Header Bar */}
-      <header className="bg-white border-b border-slate-200/80 px-4 sm:px-8 py-3.5 sticky top-0 z-30 shadow-2xs">
+      <header className="bg-white dark:bg-[#0d1424] border-b border-slate-200/80 dark:border-slate-800/80 px-4 sm:px-8 py-3.5 sticky top-0 z-30 shadow-2xs">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-3">
           {/* Logo & Search */}
           <div className="flex items-center gap-4 flex-1 max-w-xl">
             <div className="flex items-center gap-2.5 shrink-0">
-              <div className="w-8 h-8 rounded-xl bg-[#0f3d2e] flex items-center justify-center text-white">
+              <div className="w-8 h-8 rounded-xl bg-[#0f3d2e] dark:bg-emerald-950 flex items-center justify-center text-white border border-transparent dark:border-emerald-800/40">
                 <Activity className="w-4 h-4 text-emerald-400" />
               </div>
-              <span className="font-extrabold text-slate-900 text-sm tracking-tight">
+              <span className="font-extrabold text-slate-900 dark:text-slate-100 text-sm tracking-tight">
                 Task Workspace
               </span>
             </div>
 
             {/* Global Search */}
             <form onSubmit={handleSearchSubmit} className="relative flex-1">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <Search className="w-4 h-4 text-slate-400 dark:text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 placeholder="Search tasks, commits, assignees..."
-                className="w-full pl-10 pr-12 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                className="w-full pl-10 pr-12 py-1.5 rounded-xl bg-slate-50 dark:bg-[#131c31] border border-slate-200 dark:border-slate-800 text-xs text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
               />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-semibold text-slate-400 px-1.5 py-0.5 rounded bg-slate-200/70">
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-semibold text-slate-400 dark:text-slate-500 px-1.5 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800">
                 Enter
               </span>
             </form>
           </div>
 
-          {/* Operational Controls: Parity, Latency, Failure Sim, Reset */}
+          {/* Operational Controls: Theme Toggle, Parity, Latency, Failure Sim, Reset */}
           <div className="flex items-center gap-2.5 flex-wrap">
-            <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-600 bg-slate-50 border border-slate-200 px-2.5 py-1 rounded-xl">
+            {/* Theme Toggle Button */}
+            <button
+              onClick={toggleTheme}
+              aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+              title={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+              className="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-xl border transition-colors bg-slate-50 dark:bg-[#131c31] border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-[#18233c]"
+            >
+              {theme === "dark" ? (
+                <>
+                  <Sun className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Light Mode</span>
+                </>
+              ) : (
+                <>
+                  <Moon className="w-3.5 h-3.5 text-slate-500" />
+                  <span>Dark Mode</span>
+                </>
+              )}
+            </button>
+
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-[#131c31] border border-slate-200 dark:border-slate-800 px-2.5 py-1 rounded-xl">
               <span className="w-2 h-2 rounded-full bg-emerald-500" />
               <span>Sync Parity</span>
             </div>
 
             {/* Latency selector */}
-            <div className="flex items-center gap-1 text-xs font-semibold text-slate-600 bg-slate-50 border border-slate-200 px-2.5 py-1 rounded-xl">
-              <Clock className="w-3.5 h-3.5 text-slate-400" />
+            <div className="flex items-center gap-1 text-xs font-semibold text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-[#131c31] border border-slate-200 dark:border-slate-800 px-2.5 py-1 rounded-xl">
+              <Clock className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
               <select
                 value={latencyMs}
                 onChange={(e) => setLatencyMs(Number(e.target.value))}
                 aria-label="Simulation delay"
-                className="bg-transparent text-xs text-slate-700 outline-none cursor-pointer"
+                className="bg-transparent text-xs text-slate-700 dark:text-slate-200 outline-none cursor-pointer"
               >
-                <option value={0}>0ms</option>
-                <option value={300}>300ms</option>
-                <option value={800}>800ms</option>
+                <option value={0} className="dark:bg-[#131c31]">0ms</option>
+                <option value={300} className="dark:bg-[#131c31]">300ms</option>
+                <option value={800} className="dark:bg-[#131c31]">800ms</option>
               </select>
             </div>
 
@@ -215,13 +239,13 @@ export default function DashboardView({
               }}
               className={`flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-xl border transition-colors ${
                 failMutations
-                  ? "bg-amber-100 border-amber-300 text-amber-800"
-                  : "bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100"
+                  ? "bg-amber-100 dark:bg-amber-950/70 border-amber-300 dark:border-amber-800/70 text-amber-800 dark:text-amber-300"
+                  : "bg-slate-50 dark:bg-[#131c31] border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#18233c]"
               }`}
             >
               <AlertTriangle
                 className={`w-3.5 h-3.5 ${
-                  failMutations ? "text-amber-600" : "text-slate-400"
+                  failMutations ? "text-amber-600 dark:text-amber-400" : "text-slate-400 dark:text-slate-500"
                 }`}
               />
               <span>Fault Sim: {failMutations ? "On" : "Off"}</span>
@@ -231,7 +255,7 @@ export default function DashboardView({
             <button
               onClick={handleResetData}
               disabled={isResetting}
-              className="flex items-center gap-1.5 text-xs font-semibold text-slate-600 bg-slate-50 hover:bg-slate-100 border border-slate-200 px-2.5 py-1 rounded-xl transition-colors"
+              className="flex items-center gap-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-[#131c31] hover:bg-slate-100 dark:hover:bg-[#18233c] border border-slate-200 dark:border-slate-800 px-2.5 py-1 rounded-xl transition-colors"
             >
               <RefreshCw
                 className={`w-3.5 h-3.5 ${isResetting ? "animate-spin" : ""}`}
@@ -247,19 +271,19 @@ export default function DashboardView({
         {/* Project Title & Team Avatars */}
         <section className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-slate-100 tracking-tight">
               Team Task Dashboard
             </h1>
-            <div className="flex flex-wrap items-center gap-2 mt-1.5 text-xs text-slate-500">
+            <div className="flex flex-wrap items-center gap-2 mt-1.5 text-xs text-slate-500 dark:text-slate-400">
               <span>Sprint Operations</span>
               <span>•</span>
               <span>105 Seeded Tasks</span>
               <span>•</span>
-              <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">
+              <span className="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300 font-bold text-[10px]">
                 In Progress
               </span>
               <span>•</span>
-              <span className="text-emerald-700 font-semibold">
+              <span className="text-emerald-700 dark:text-emerald-400 font-semibold">
                 Synchronized Workspace
               </span>
             </div>
@@ -267,34 +291,34 @@ export default function DashboardView({
 
           {/* Team stack */}
           <div className="flex items-center -space-x-1.5">
-            <span className="w-8 h-8 rounded-full bg-slate-800 text-white font-bold text-[11px] flex items-center justify-center ring-2 ring-white">
+            <span className="w-8 h-8 rounded-full bg-slate-800 dark:bg-slate-700 text-white font-bold text-[11px] flex items-center justify-center ring-2 ring-white dark:ring-[#090d16]">
               AR
             </span>
-            <span className="w-8 h-8 rounded-full bg-emerald-700 text-white font-bold text-[11px] flex items-center justify-center ring-2 ring-white">
+            <span className="w-8 h-8 rounded-full bg-emerald-700 dark:bg-emerald-800 text-white font-bold text-[11px] flex items-center justify-center ring-2 ring-white dark:ring-[#090d16]">
               EC
             </span>
-            <span className="w-8 h-8 rounded-full bg-indigo-700 text-white font-bold text-[11px] flex items-center justify-center ring-2 ring-white">
+            <span className="w-8 h-8 rounded-full bg-indigo-700 dark:bg-indigo-800 text-white font-bold text-[11px] flex items-center justify-center ring-2 ring-white dark:ring-[#090d16]">
               MV
             </span>
-            <span className="w-8 h-8 rounded-full bg-amber-700 text-white font-bold text-[11px] flex items-center justify-center ring-2 ring-white">
+            <span className="w-8 h-8 rounded-full bg-amber-700 dark:bg-amber-800 text-white font-bold text-[11px] flex items-center justify-center ring-2 ring-white dark:ring-[#090d16]">
               SJ
             </span>
-            <span className="w-8 h-8 rounded-full bg-slate-200 text-slate-700 font-bold text-[11px] flex items-center justify-center ring-2 ring-white">
+            <span className="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-[11px] flex items-center justify-center ring-2 ring-white dark:ring-[#090d16]">
               +5
             </span>
           </div>
         </section>
 
         {/* View Switcher, Filter & Action Bar */}
-        <section className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-200/80 pb-4 gap-3">
+        <section className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-200/80 dark:border-slate-800/80 pb-4 gap-3">
           {/* Focused View Toggle: Board vs Table */}
-          <div className="flex items-center bg-white border border-slate-200 rounded-2xl p-1 shadow-2xs">
+          <div className="flex items-center bg-white dark:bg-[#0d1424] border border-slate-200 dark:border-slate-800 rounded-2xl p-1 shadow-2xs">
             <button
               onClick={() => setViewMode("kanban")}
               className={`flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-xs font-bold transition-all ${
                 viewMode === "kanban"
-                  ? "bg-[#dcfce7] text-[#0f3d2e] shadow-xs"
-                  : "text-slate-600 hover:text-slate-900"
+                  ? "bg-[#dcfce7] dark:bg-emerald-950/80 text-[#0f3d2e] dark:text-emerald-300 shadow-xs"
+                  : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
               }`}
             >
               <Columns3 className="w-3.5 h-3.5" />
@@ -304,8 +328,8 @@ export default function DashboardView({
               onClick={() => setViewMode("table")}
               className={`flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-xs font-bold transition-all ${
                 viewMode === "table"
-                  ? "bg-[#0f3d2e] text-white shadow-xs"
-                  : "text-slate-600 hover:text-slate-900"
+                  ? "bg-[#0f3d2e] dark:bg-slate-800 text-white dark:text-emerald-300 shadow-xs"
+                  : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
               }`}
             >
               <TableIcon className="w-3.5 h-3.5" />
@@ -316,18 +340,18 @@ export default function DashboardView({
           {/* Sort, Filter & Add Task */}
           <div className="flex items-center gap-2.5 flex-wrap">
             {/* Sort Dropdown */}
-            <div className="flex items-center gap-1.5 text-xs font-medium text-slate-500 bg-white border border-slate-200 px-3 py-1.5 rounded-xl shadow-2xs">
+            <div className="flex items-center gap-1.5 text-xs font-medium text-slate-500 dark:text-slate-400 bg-white dark:bg-[#0d1424] border border-slate-200 dark:border-slate-800 px-3 py-1.5 rounded-xl shadow-2xs">
               <span>Sort by:</span>
               <select
                 value={urlSortBy}
                 onChange={(e) => updateParam("sortBy", e.target.value)}
                 aria-label="Sort tasks by"
-                className="bg-transparent font-bold text-slate-800 outline-none cursor-pointer"
+                className="bg-transparent font-bold text-slate-800 dark:text-slate-200 outline-none cursor-pointer"
               >
-                <option value="status">Stage</option>
-                <option value="priority">Priority</option>
-                <option value="dueDate">Due Date</option>
-                <option value="title">Title</option>
+                <option value="status" className="dark:bg-[#0d1424]">Stage</option>
+                <option value="priority" className="dark:bg-[#0d1424]">Priority</option>
+                <option value="dueDate" className="dark:bg-[#0d1424]">Due Date</option>
+                <option value="title" className="dark:bg-[#0d1424]">Title</option>
               </select>
             </div>
 
@@ -335,22 +359,22 @@ export default function DashboardView({
             <div className="relative">
               <button
                 onClick={() => setIsFilterDropdownOpen(!isFilterDropdownOpen)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-xs font-semibold text-slate-700 shadow-2xs"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0d1424] hover:bg-slate-50 dark:hover:bg-[#131c31] text-xs font-semibold text-slate-700 dark:text-slate-300 shadow-2xs"
               >
                 <Filter className="w-3.5 h-3.5" />
                 <span>Filter</span>
               </button>
 
               {isFilterDropdownOpen && (
-                <div className="absolute right-0 top-10 w-64 bg-white border border-slate-200 rounded-2xl shadow-xl p-3 z-30 space-y-3">
+                <div className="absolute right-0 top-10 w-64 bg-white dark:bg-[#0d1424] border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl p-3 z-30 space-y-3">
                   <div>
-                    <label className="block text-[11px] font-bold text-slate-600 mb-1">
+                    <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-400 mb-1">
                       Status
                     </label>
                     <select
                       value={urlStatus}
                       onChange={(e) => updateParam("status", e.target.value)}
-                      className="w-full text-xs p-1.5 rounded-lg border border-slate-200"
+                      className="w-full text-xs p-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#131c31] text-slate-800 dark:text-slate-200"
                     >
                       <option value="all">All</option>
                       <option value="todo">To Do</option>
@@ -361,13 +385,13 @@ export default function DashboardView({
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-bold text-slate-600 mb-1">
+                    <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-400 mb-1">
                       Priority
                     </label>
                     <select
                       value={urlPriority}
                       onChange={(e) => updateParam("priority", e.target.value)}
-                      className="w-full text-xs p-1.5 rounded-lg border border-slate-200"
+                      className="w-full text-xs p-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#131c31] text-slate-800 dark:text-slate-200"
                     >
                       <option value="all">All</option>
                       <option value="urgent">Urgent</option>
@@ -378,7 +402,7 @@ export default function DashboardView({
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-bold text-slate-600 mb-1">
+                    <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-400 mb-1">
                       Assignee
                     </label>
                     <select
@@ -386,7 +410,7 @@ export default function DashboardView({
                       onChange={(e) =>
                         updateParam("assigneeId", e.target.value)
                       }
-                      className="w-full text-xs p-1.5 rounded-lg border border-slate-200"
+                      className="w-full text-xs p-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#131c31] text-slate-800 dark:text-slate-200"
                     >
                       <option value="all">All Team</option>
                       {assignees.map((a) => (
@@ -403,7 +427,7 @@ export default function DashboardView({
             {/* Create Task Button */}
             <button
               onClick={() => setIsCreateModalOpen(true)}
-              className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-[#0f3d2e] hover:bg-[#0c3527] text-white text-xs font-semibold shadow-xs"
+              className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-[#0f3d2e] dark:bg-emerald-700 hover:bg-[#0c3527] dark:hover:bg-emerald-600 text-white text-xs font-semibold shadow-xs"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Add New Task</span>
@@ -413,7 +437,7 @@ export default function DashboardView({
 
         {/* 4 Metric Summary Cards */}
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-[#0f3d2e] text-white rounded-3xl p-5 shadow-sm space-y-3 relative overflow-hidden">
+          <div className="bg-[#0f3d2e] dark:bg-[#0c2e22] text-white rounded-3xl p-5 shadow-sm space-y-3 relative overflow-hidden border border-emerald-900/60 dark:border-emerald-800/40">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-emerald-100">
                 Total Tracked Tasks
@@ -428,60 +452,60 @@ export default function DashboardView({
             </div>
           </div>
 
-          <div className="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-2xs space-y-3">
+          <div className="bg-white dark:bg-[#1a130b] rounded-3xl p-5 border border-slate-200/80 dark:border-[#382613]/80 shadow-2xs space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-slate-600">
+              <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
                 In Progress Velocity
               </span>
-              <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center">
-                <ArrowUpRight className="w-3.5 h-3.5 text-slate-400" />
+              <div className="w-6 h-6 rounded-full bg-slate-100 dark:bg-[#281b0f] flex items-center justify-center">
+                <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 dark:text-amber-400" />
               </div>
             </div>
-            <div className="text-3xl font-extrabold text-slate-900 tracking-tight">
+            <div className="text-3xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight">
               {inProgressCount}
             </div>
-            <div className="flex items-center gap-2 text-[11px] text-slate-500">
-              <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold">
+            <div className="flex items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400">
+              <span className="px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 font-bold">
                 Active Rollouts
               </span>
               <span>300ms cache parity</span>
             </div>
           </div>
 
-          <div className="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-2xs space-y-3">
+          <div className="bg-white dark:bg-[#0b1626] rounded-3xl p-5 border border-slate-200/80 dark:border-[#132c48]/80 shadow-2xs space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-slate-600">
+              <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
                 In Review & PRs
               </span>
-              <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center">
-                <ArrowUpRight className="w-3.5 h-3.5 text-slate-400" />
+              <div className="w-6 h-6 rounded-full bg-slate-100 dark:bg-[#102238] flex items-center justify-center">
+                <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 dark:text-sky-400" />
               </div>
             </div>
-            <div className="text-3xl font-extrabold text-slate-900 tracking-tight">
+            <div className="text-3xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight">
               {inReviewCount}
             </div>
-            <div className="flex items-center gap-2 text-[11px] text-slate-500">
-              <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 font-bold">
+            <div className="flex items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400">
+              <span className="px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 font-bold">
                 QA Verification
               </span>
               <span>4 pending approval</span>
             </div>
           </div>
 
-          <div className="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-2xs space-y-3">
+          <div className="bg-white dark:bg-[#150f26] rounded-3xl p-5 border border-slate-200/80 dark:border-[#2b1b4a]/80 shadow-2xs space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-slate-600">
+              <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
                 Completed & Merged
               </span>
-              <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center">
-                <ArrowUpRight className="w-3.5 h-3.5 text-slate-400" />
+              <div className="w-6 h-6 rounded-full bg-slate-100 dark:bg-[#201538] flex items-center justify-center">
+                <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 dark:text-purple-400" />
               </div>
             </div>
-            <div className="text-3xl font-extrabold text-slate-900 tracking-tight">
+            <div className="text-3xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight">
               {doneCount}
             </div>
-            <div className="flex items-center gap-2 text-[11px] text-slate-500">
-              <span className="px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 font-bold">
+            <div className="flex items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400">
+              <span className="px-2 py-0.5 rounded-full bg-purple-100 dark:bg-purple-950/60 text-purple-800 dark:text-purple-300 font-bold">
                 100% Staged
               </span>
               <span>0 regressions</span>
