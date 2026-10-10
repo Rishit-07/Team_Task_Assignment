@@ -51,7 +51,7 @@ Visit **http://localhost:3000** in your browser.
 
 ---
 
-## 3. Honest Status: Completed Features vs Incomplete / Omitted Scope
+## 3. Honest Status: Completed Features vs Incomplete Features
 
 Per project requirements to prioritize a working, tested core and honestly disclose incomplete items:
 
@@ -66,17 +66,14 @@ Per project requirements to prioritize a working, tested core and honestly discl
 8. **Validated Task Creation**: Modal dialog with Zod schema validation for title, description, priority, and due date.
 9. **Automated Test Suite**: 9 passing tests in Vitest covering combined filters, optimistic mutation rollback, and cross-view cache parity.
 
-### Incomplete & Intentionally Omitted Scope
-As requested to remove non-essential clutter and keep only the core working dashboard:
-- **Sidebar & Secondary Navigation**: The multi-page sidebar (Dashboard, Calendar, Analytics, Team, Preferences) was removed to focus purely on the main task board.
-- **Header Actions**: The non-functional "Share", "Settings", and "Invite People" buttons were removed.
-- **Notifications Component**: Dedicated notifications inbox was omitted in favor of inline toast feedback for optimistic rollbacks.
-- **Profile / Auth Sub-Pages**: User profile management and authentication were excluded; the app operates in an unauthenticated local evaluation environment.
-- **Active Sprint Focus Timer**: The live pomodoro countdown clock widget was not implemented.
-- **Upcoming Sync Meeting Widget**: The Google Meet join action card was not implemented.
-- **Circular Sprint Progression Chart**: Progress is shown through numerical metrics and linear indicators rather than an SVG radial donut chart.
-- **External Database**: Runs self-contained in memory without PostgreSQL or Redis dependencies.
-- **WebSockets**: State updates rely on TanStack Query cache invalidation rather than a persistent WebSocket connection.
+### Incomplete Features (Current Scope Limitations)
+The following interactive elements currently present on the dashboard are visual representations and are not yet fully wired to backend flows:
+- **Card Attachments & Replies**: The paperclip (attachments: 1) and comment bubble (replies: 3) icons on task cards are static display indicators. Clicking them does not currently open a file attachment viewer or an interactive discussion thread modal.
+- **Team Avatar Stack**: The member circles in the header (`AR`, `EC`, `MV`, `SJ`, `+5`) visually indicate project contributors, but clicking them does not currently trigger an assignee quick-filter or member profile dialog.
+- **Metric Card Drill-Down Arrows**: The diagonal arrow icons (`↗`) on the four summary metric cards are visual accents and do not currently navigate to deep-dive analytics or apply automatic status filter presets.
+- **Card Sub-Task Checklists**: Task cards render a computed progress bar and note, but granular inline checklist item ticking within individual cards is not yet supported.
+- **Persistent Database Storage**: Task mutations persist in the in-memory server store for the life of the process, but reset to the 105 seeded tasks on a full server reboot.
+- **Live WebSocket Collaboration**: Cross-tab synchronization relies on TanStack Query cache invalidation and window focus refetching rather than a live bi-directional WebSocket connection.
 
 ---
 
