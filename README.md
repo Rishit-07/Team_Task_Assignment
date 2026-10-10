@@ -1,46 +1,31 @@
-# Team Task Dashboard
+# NovaBoard Mobile & Core Engine - Sprint Task Dashboard
 
-A high-performance team task management dashboard built with Next.js App Router, TypeScript, Tailwind CSS, TanStack Query v5, and Zustand.
+A high-performance team sprint task dashboard built with Next.js App Router, TypeScript, Tailwind CSS, TanStack Query v5, and Zustand.
 
-The project prioritizes a reliable, responsive, and thoroughly tested core workspace: optimistic status mutations with instant snapshot rollback on network failures, synchronized Kanban and tabular views, debounced search, multi-faceted filtering, shareable URL query persistence, and chaos testing controls.
+The user interface is modeled directly after the **NovaBoard / Donezo Sprint Engine** reference layout, focusing on a dependable, responsive, and thoroughly tested core.
 
 ---
 
-## 1. Architecture Overview
+## 1. Architectural Overview
 
-### State Management Separation
-- **Server State (TanStack Query v5)**:
-  - Manages asynchronous task collections, individual task records, and team member directories.
-  - Query keys follow structured tuples: `['tasks', filters]`.
-  - Mutations (`useUpdateTask`, `useDeleteTask`) apply instant optimistic updates to the cache while creating rollback snapshots. If an API request fails, the cache immediately reverts to its previous state and notifies the user with a rollback banner.
-  - On settled execution, cache invalidation refetches the current dataset to ensure absolute consistency with backend state.
+### Server State & Optimistic UI (TanStack Query v5)
+- **Cache Strategy**: Queries are keyed deterministically by filter criteria (`['tasks', filters]`).
+- **Optimistic Mutations**: Status moves (via drag-and-drop, quick action buttons, or inline dropdowns) immediately update the client cache.
+- **Rollback on Failure**: When mutations fail (or when the **Fault Sim** toggle is active), the prior cache snapshot is restored, and an alert notifies the user that the action was reverted.
+- **Cache Parity**: Updates made on the Kanban board immediately synchronize with the List/Table view and top-level metric counters.
 
-- **Client State (Zustand with LocalStorage Persistence)**:
-  - Handles UI layout preferences: active view mode (`kanban` vs `table`), theme preference (`dark` vs `light`), and active toast notifications.
-  - Controls chaos engineering flags: `failMutations` (forces API routes to reject with 500 status codes) and `latencyMs` (simulates artificial network latency from 0ms to 1500ms).
+### Local Client State (Zustand)
+- Manages active view preferences (`kanban` vs `table`), chaos engineering toggles (`failMutations`), and network delay parameters (`latencyMs`) with local storage persistence.
 
-### Data Layer & Mock API
-- **In-Memory Store (`src/lib/mockData.ts`)**:
-  - Pre-seeded with 105 realistic synthetic tasks distributed across 8 team members, 5 workflow statuses (`backlog`, `todo`, `in_progress`, `in_review`, `done`), and 4 priority tiers (`low`, `medium`, `high`, `urgent`).
-  - Next.js Route Handlers:
-    - `GET /api/tasks`: Supports search keywords, status, priority, assignee, sorting, and pagination. Computes dynamic facet counts for the current filtered slice.
-    - `POST /api/tasks`: Validates schema via Zod and creates records with 201 response.
-    - `GET /api/tasks/[id]`: Retrieves specific task records.
-    - `PATCH /api/tasks/[id]`: Modifies properties (status, assignee, priority, description) and checks failure simulation headers.
-    - `DELETE /api/tasks/[id]`: Removes tasks while supporting chaos rejection.
-    - `POST /api/reset`: Restores the in-memory store back to the clean 105 seeded tasks.
-    - `GET /api/assignees`: Provides team roster metadata and avatar endpoints.
-
-### Dual Synchronized Views
-- **Kanban Board (`src/components/KanbanBoard.tsx`)**:
-  - Five distinct status lanes with active drop indicators.
-  - HTML5 native drag-and-drop support.
-  - Accessible keyboard control: each card provides a dedicated "Move to status" dropdown selector, allowing screen reader and keyboard-only users to transition tasks between columns using standard Tab and Enter keys without a mouse.
-- **Data Table (`src/components/TaskTable.tsx`)**:
-  - Sortable column headers (Title, Status, Priority, Due Date).
-  - Inline status and priority dropdowns allowing direct optimistic editing.
-  - Pagination controls with configurable items per page (10, 20, 50).
-  - Synchronized cache: editing a task in the table instantly updates its location and column count on the Kanban board.
+### Mock API & Data Layer
+- **Seeded Dataset**: 105 realistic synthetic tasks distributed across 8 team members, 4 workflow lanes (`todo`, `in_progress`, `in_review`, `done`), and 4 priority tiers (`low`, `medium`, `high`, `urgent`).
+- **Route Handlers**:
+  - `GET /api/tasks`: Supports search keywords, status, priority, assignee, sorting, and pagination.
+  - `POST /api/tasks`: Validates payloads via Zod and creates new tasks.
+  - `PATCH /api/tasks/[id]`: Updates task status, assignee, and fields with chaos failure simulation.
+  - `DELETE /api/tasks/[id]`: Removes tasks from the workspace.
+  - `POST /api/reset`: Restores the in-memory store to the original 105 seeded tasks.
+  - `GET /api/assignees`: Provides team member metadata and role assignments.
 
 ---
 
@@ -50,111 +35,83 @@ The project prioritizes a reliable, responsive, and thoroughly tested core works
 - Node.js 18.18 or higher (tested on Node.js v22.17.1)
 - npm 9 or higher
 
-### Installation
+### Installation & Run
 ```bash
+# Install dependencies
 npm install
-```
 
-### Running the Development Server
-```bash
+# Run automated test suite
+npm test
+
+# Start development server
 npm run dev
 ```
-Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-### Running Automated Tests
-```bash
-npm test
-```
-Runs the Vitest suite covering combined filters, optimistic mutation rollback, and view synchronization.
-
-### Building for Production
-```bash
-npm run build
-npm start
-```
+Visit **http://localhost:3000** in your browser.
 
 ---
 
-## 3. Completed Features & Intentional Limitations
+## 3. Honest Status: Completed vs Intentionally Omitted Scope
 
-### Completed Core Features
-1. **Seeded Synthetic Dataset**: 105 realistic tasks with varied assignees, milestones, tags, and dates.
-2. **REST API Handlers**: Full CRUD, pagination, multi-criteria filtering, and facet calculations.
-3. **Optimistic UI with Rollback**: Instant status transitions that immediately snapshot and restore on simulated 500 errors.
-4. **Chaos Controls**: Real-time toggle for mutation failure injection, latency tuning (0ms to 1500ms), and database reset button.
-5. **Synchronized Kanban & Table**: Both views share the same query cache and stay in exact parity.
-6. **Accessible Navigation**: Alternative keyboard dropdowns on all cards for users who cannot use drag-and-drop.
-7. **URL Parameter Sync**: Debounced search and multi-select filters serialize directly to URL search parameters for link sharing.
-8. **Zustand Persistence**: Saved preferences for view mode, theme, and simulation parameters survive page refreshes.
-9. **Automated Test Coverage**: Test suites for filtering combinations, cache rollback on failure, and cross-view cache parity.
+Per user instruction to prioritize a rock-solid working core and be transparent about incomplete or excluded items:
 
-### Intentional Limitations & Out-of-Scope Items
-- **Persistent Database**: An in-memory store was selected for this assessment to ensure self-contained, zero-dependency setup without requiring external PostgreSQL/Redis credentials. Data resets to seeded state on cold server restarts (or via the UI Reset button).
-- **Authentication**: User logins and permission-based role gates were omitted to prioritize core task management and optimistic UX.
-- **WebSocket Live Collab**: Cross-tab synchronization relies on query cache invalidation and window focus refetching rather than real-time WebSockets.
+### Completed & Working Features
+1. **NovaBoard Reference Design**: Sidebar, top navigation, metrics cards, view tabs, and 4 colored Kanban lanes matching the reference layout.
+2. **105 Seeded Synthetic Tasks**: Complete dataset spanning real engineering scenarios.
+3. **Optimistic Updates & Rollback**: Instant status progression with rollback if the API fails.
+4. **Chaos Testing Controls**: Interactive **Fault Sim: Off/On** switch, delay selector (0ms, 300ms, 800ms), and **Seed 105** reset button in the top bar.
+5. **Synchronized Board & List Views**: Switching between **Board** and **List** tabs maintains identical task states and counts.
+6. **Accessible Keyboard Controls**: Action buttons on every card (`Move to In Progress ->`, etc.) and dropdown selectors enable complete keyboard-driven navigation without a mouse.
+7. **Filter & Search Synchronization**: Debounced search input, multi-faceted filtering, and URL query parameter reflection.
+8. **Validated Task Creation**: Dialog with schema validation for title, description, priority, and due date.
+9. **Automated Test Suite**: 9 passing tests in Vitest covering combined filters, optimistic mutation rollback, and cross-view cache parity.
+
+### Intentionally Omitted / Incomplete Scope
+As agreed, the following secondary widgets and sub-pages were omitted to maintain a clean, stable core:
+- **Standalone Settings & Profile Pages**: Settings and profile buttons are visual indicators in the navigation bar and do not navigate to separate sub-routes.
+- **Standalone Notifications Component**: In-app notifications use toast alert banners for rollback/success rather than a full inbox screen.
+- **Active Sprint Focus Timer**: The standalone live countdown clock widget was not implemented.
+- **Upcoming Sync Meeting Widget**: The Google Meet quick-action card was omitted.
+- **Circular Sprint Progression Chart**: Progress is tracked via linear percentage indicators rather than an SVG radial donut chart.
+- **External Database & Authentication**: The mock layer runs in-memory with zero external database dependencies.
+- **WebSockets**: State updates rely on TanStack Query cache synchronization rather than a WebSocket server.
 
 ---
 
-## 4. Team Division Plan (3 Developers)
+## 4. Plan for 3-Developer Sprint
 
-To deliver this system in a multi-developer environment, work would be segmented into three parallel streams:
+### Developer 1: Backend Architecture & Validation (Lead)
+- Data schemas, synthetic task generator (105 items), and Next.js route handlers.
+- Search, filter algorithms, pagination logic, and sorting engines.
+- Chaos headers and unit tests for filter combinations.
 
-### Developer 1: Backend Architecture & Data Contracts (Lead)
-- **Scope**: Data models, synthetic dataset generation, REST API Route Handlers, error simulation middleware, and server-side validation schemas.
-- **Deliverables**:
-  - `src/types/task.ts` & Zod validation rules.
-  - Route handlers: `/api/tasks`, `/api/tasks/[id]`, `/api/assignees`, `/api/simulate`.
-  - Integration tests for filtering, sorting algorithms, and facet count aggregations.
+### Developer 2: TanStack Query & Optimistic State
+- React Query client configuration, mutation hooks, and snapshot rollback handlers.
+- Zustand persistence store, chaos engineering toggle controls, and toast notifications.
+- Vitest suites verifying optimistic updates and cache reversal upon network error.
 
-### Developer 2: Server State & Optimistic Mutation Engine
-- **Scope**: TanStack Query integration, optimistic UI cache management, rollback mechanics, and toast feedback systems.
-- **Deliverables**:
-  - `src/hooks/useTasks.ts` with custom mutations and rollback snapshots.
-  - Error banner, toast alert, and retry components.
-  - Chaos simulation bar and Zustand persistent preferences.
-  - Unit tests verifying snapshot restoration on simulated failure.
-
-### Developer 3: Interactive UI Views & Accessibility
-- **Scope**: Responsive layouts, Kanban board drag-and-drop, accessible keyboard fallback controls, paginated data table, and URL query synchronization.
-- **Deliverables**:
-  - `src/components/KanbanBoard.tsx` (drag-and-drop + keyboard action menus).
-  - `src/components/TaskTable.tsx` (sorting headers, inline edits, pagination).
-  - `src/components/FilterBar.tsx` (debounced search, filter pills, URL param syncing).
-  - WCAG 2.1 AA keyboard navigation and screen reader audits.
+### Developer 3: UI, Accessibility & Views
+- NovaBoard layout implementation, responsive sidebar, metric banners, and view switcher.
+- Drag-and-drop Kanban board with keyboard-friendly action buttons.
+- Data table component with sortable headers and pagination controls.
+- Keyboard focus management and WCAG accessibility standards.
 
 ---
 
 ## 5. Code Review Checklist
 
-Before approving any pull request in this repository, reviewers must verify:
-
-### Correctness & Resilience
-- [ ] Optimistic mutations correctly cancel outgoing refetches before mutating cache.
-- [ ] Rollback snapshots are properly captured in `onMutate` and restored in `onError`.
-- [ ] `onSettled` always invalidates the relevant query keys to avoid state drift.
-- [ ] Filter changes reset the pagination offset to page 1.
-
-### Performance & Hygiene
-- [ ] Search inputs are debounced (at least 250ms) to avoid request storms.
-- [ ] Query keys follow deterministic tuple structures (`['tasks', filters]`).
-- [ ] No unmemoized expensive transformations inside render loops.
-- [ ] Components cleanly unmount without dangling timeout or event listeners.
-
-### Accessibility (a11y)
-- [ ] Interactive elements are reachable via keyboard Tab order.
-- [ ] An explicit non-drag alternative exists for every drag-and-drop interaction.
-- [ ] Form inputs have associated `<label>` elements or descriptive `aria-label` attributes.
-- [ ] Color contrast meets WCAG 2.1 AA standards in both light and dark modes.
-
-### Types & Testing
-- [ ] Strict TypeScript mode passes with zero `any` types.
-- [ ] All new logic paths include unit or integration test assertions in Vitest.
-- [ ] No hardcoded configuration values or credentials.
+- [ ] **Optimistic Mutation Safety**: Cancels queries before mutating, takes cache snapshot, reverts on error, invalidates on settled.
+- [ ] **Filter Reset**: Changing filters resets pagination to page 1.
+- [ ] **Search Debounce**: Search input is debounced by 300ms before sending network requests or modifying URLs.
+- [ ] **Drag Alternative**: Every drag-and-drop card provides a keyboard-accessible button or select control.
+- [ ] **Color Contrast**: Form controls and badges meet WCAG AA contrast criteria.
+- [ ] **Zero Compilation Warnings**: TypeScript builds without errors under strict mode.
+- [ ] **Automated Test Verification**: All Vitest test suites execute and pass.
 
 ---
 
 ## 6. AI Assistance Disclosure
 
 In accordance with transparent engineering practices:
-- Large Language Model assistance was utilized for rapid boilerplate scaffolding, synthetic seed dataset generation, and test case structuring.
-- Architectural design decisions, state partitioning between Zustand and TanStack Query, optimistic rollback error-boundary strategies, and accessibility patterns were directed and validated to ensure strict adherence to prompt criteria and production best practices.
+- AI assistance was used for initial code scaffolding, synthetic seed dataset creation, and test case structuring.
+- Architectural design, optimistic state management, accessibility patterns, and UI alignment with the reference mockup were directed and validated to ensure strict compliance with project specifications.

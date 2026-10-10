@@ -12,12 +12,6 @@ const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 export async function GET(request: NextRequest) {
   const sim = getSimulationConfig();
 
-  // Simulate artificial delay if configured
-  const latency = sim.latencyMs;
-  if (latency > 0) {
-    await delay(latency);
-  }
-
   // Check read failure simulation
   const forceErrorHeader = request.headers.get("x-simulate-error") === "true";
   if (sim.failReads || forceErrorHeader) {

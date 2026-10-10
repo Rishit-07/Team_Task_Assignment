@@ -10,24 +10,16 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        canvas: {
-          light: "#f8fafc",
-          dark: "#0b0f19",
+        forest: {
+          800: "#0f3d2e",
+          900: "#0c3527",
+          950: "#07241a",
         },
-        panel: {
-          light: "#ffffff",
-          dark: "#111827",
-        },
-        border: {
-          light: "#e2e8f0",
-          dark: "#1f293d",
-        },
-        brand: {
-          50: "#eef2ff",
-          100: "#e0e7ff",
-          500: "#6366f1",
-          600: "#4f46e5",
-          700: "#4338ca",
+        sage: {
+          50: "#f6f8f7",
+          100: "#ecf1ee",
+          200: "#d9e2dc",
+          500: "#10b981",
         },
       },
       fontFamily: {

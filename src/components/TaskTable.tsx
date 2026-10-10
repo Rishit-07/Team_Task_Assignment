@@ -5,7 +5,6 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   Assignee,
   PaginatedTasksResponse,
-  Task,
   TaskPriority,
   TaskStatus,
 } from "@/types/task";
@@ -95,50 +94,47 @@ export default function TaskTable({ data, assignees }: TaskTableProps) {
       return <ArrowUpDown className="w-3.5 h-3.5 text-slate-400 opacity-60" />;
     }
     return currentSortOrder === "asc" ? (
-      <ArrowUp className="w-3.5 h-3.5 text-indigo-500" />
+      <ArrowUp className="w-3.5 h-3.5 text-emerald-600" />
     ) : (
-      <ArrowDown className="w-3.5 h-3.5 text-indigo-500" />
+      <ArrowDown className="w-3.5 h-3.5 text-emerald-600" />
     );
   };
 
   const getPriorityStyle = (priority: TaskPriority) => {
     switch (priority) {
       case "urgent":
-        return "text-rose-500 bg-rose-500/10 border-rose-500/20";
       case "high":
-        return "text-orange-500 bg-orange-500/10 border-orange-500/20";
+        return "text-[#b91c1c] bg-[#fee2e2] border-[#fecaca]";
       case "medium":
-        return "text-amber-500 bg-amber-500/10 border-amber-500/20";
+        return "text-[#15803d] bg-[#dcfce7] border-[#bbf7d0]";
       case "low":
-        return "text-slate-400 bg-slate-500/10 border-slate-500/20";
+        return "text-[#0369a1] bg-[#e0f2fe] border-[#bae6fd]";
     }
   };
 
   const getStatusStyle = (status: TaskStatus) => {
     switch (status) {
       case "done":
-        return "text-emerald-500 bg-emerald-500/10 border-emerald-500/20";
+        return "text-[#7c3aed] bg-[#f5f3ff] border-[#ddd6fe]";
       case "in_review":
-        return "text-amber-500 bg-amber-500/10 border-amber-500/20";
+        return "text-[#0284c7] bg-[#f0f9ff] border-[#bae6fd]";
       case "in_progress":
-        return "text-indigo-500 bg-indigo-500/10 border-indigo-500/20";
+        return "text-[#d97706] bg-[#fef9ee] border-[#fde68a]";
       case "todo":
-        return "text-blue-500 bg-blue-500/10 border-blue-500/20";
       case "backlog":
-        return "text-slate-400 bg-slate-500/10 border-slate-500/20";
+        return "text-[#e11d48] bg-[#fff1f4] border-[#ffe4e9]";
     }
   };
 
   return (
-    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden flex flex-col">
-      {/* Table Container */}
+    <div className="bg-white border border-slate-200/80 rounded-3xl shadow-xs overflow-hidden flex flex-col">
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs border-collapse">
           <thead>
-            <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-50/75 dark:bg-slate-900/90 text-slate-500 dark:text-slate-400 uppercase tracking-wider font-semibold text-[11px]">
+            <tr className="border-b border-slate-100 bg-slate-50/70 text-slate-500 uppercase tracking-wider font-bold text-[11px]">
               <th
                 onClick={() => handleSort("title")}
-                className="py-3.5 px-4 cursor-pointer hover:text-slate-900 dark:hover:text-slate-200 select-none"
+                className="py-3.5 px-5 cursor-pointer hover:text-slate-900 select-none"
               >
                 <div className="flex items-center gap-1.5">
                   <span>Task Details</span>
@@ -147,16 +143,16 @@ export default function TaskTable({ data, assignees }: TaskTableProps) {
               </th>
               <th
                 onClick={() => handleSort("status")}
-                className="py-3.5 px-3 cursor-pointer hover:text-slate-900 dark:hover:text-slate-200 select-none w-36"
+                className="py-3.5 px-3 cursor-pointer hover:text-slate-900 select-none w-36"
               >
                 <div className="flex items-center gap-1.5">
-                  <span>Status</span>
+                  <span>Stage</span>
                   {getSortIcon("status")}
                 </div>
               </th>
               <th
                 onClick={() => handleSort("priority")}
-                className="py-3.5 px-3 cursor-pointer hover:text-slate-900 dark:hover:text-slate-200 select-none w-32"
+                className="py-3.5 px-3 cursor-pointer hover:text-slate-900 select-none w-32"
               >
                 <div className="flex items-center gap-1.5">
                   <span>Priority</span>
@@ -168,19 +164,19 @@ export default function TaskTable({ data, assignees }: TaskTableProps) {
               </th>
               <th
                 onClick={() => handleSort("dueDate")}
-                className="py-3.5 px-3 cursor-pointer hover:text-slate-900 dark:hover:text-slate-200 select-none w-32"
+                className="py-3.5 px-3 cursor-pointer hover:text-slate-900 select-none w-32"
               >
                 <div className="flex items-center gap-1.5">
                   <span>Due Date</span>
                   {getSortIcon("dueDate")}
                 </div>
               </th>
-              <th className="py-3.5 px-4 text-right w-16">
+              <th className="py-3.5 px-5 text-right w-16">
                 <span>Actions</span>
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-slate-700 dark:text-slate-200">
+          <tbody className="divide-y divide-slate-100 text-slate-700">
             {data.items.length === 0 ? (
               <tr>
                 <td colSpan={6} className="py-12 text-center text-slate-400">
@@ -191,21 +187,20 @@ export default function TaskTable({ data, assignees }: TaskTableProps) {
               data.items.map((task) => (
                 <tr
                   key={task.id}
-                  className="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors"
+                  className="hover:bg-slate-50/70 transition-colors"
                 >
-                  {/* Title & tags */}
-                  <td className="py-3.5 px-4 max-w-sm">
-                    <div className="font-semibold text-slate-900 dark:text-slate-100 text-xs mb-1 line-clamp-1">
+                  <td className="py-3.5 px-5 max-w-sm">
+                    <div className="font-bold text-slate-900 text-xs mb-0.5 line-clamp-1">
                       {task.title}
                     </div>
-                    <p className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-1 mb-1">
+                    <p className="text-[11px] text-slate-400 line-clamp-1 mb-1">
                       {task.description}
                     </p>
                     <div className="flex flex-wrap gap-1">
                       {task.tags.map((t) => (
                         <span
                           key={t}
-                          className="text-[9px] px-1.5 py-0.2 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 rounded"
+                          className="text-[9px] font-medium px-2 py-0.5 bg-slate-100 text-slate-500 rounded-full"
                         >
                           #{t}
                         </span>
@@ -213,27 +208,24 @@ export default function TaskTable({ data, assignees }: TaskTableProps) {
                     </div>
                   </td>
 
-                  {/* Status Inline Select (Optimistic) */}
                   <td className="py-3.5 px-3">
                     <select
                       value={task.status}
                       onChange={(e) =>
                         handleStatusChange(task.id, e.target.value as TaskStatus)
                       }
-                      aria-label={`Change status for ${task.title}`}
-                      className={`text-[11px] font-medium uppercase tracking-wider px-2 py-1 rounded border outline-none cursor-pointer ${getStatusStyle(
+                      aria-label={`Stage for ${task.title}`}
+                      className={`text-[11px] font-semibold capitalize px-2.5 py-1 rounded-full border outline-none cursor-pointer ${getStatusStyle(
                         task.status
                       )}`}
                     >
-                      <option value="backlog">Backlog</option>
                       <option value="todo">To Do</option>
                       <option value="in_progress">In Progress</option>
                       <option value="in_review">In Review</option>
-                      <option value="done">Done</option>
+                      <option value="done">Completed</option>
                     </select>
                   </td>
 
-                  {/* Priority Inline Select (Optimistic) */}
                   <td className="py-3.5 px-3">
                     <select
                       value={task.priority}
@@ -243,8 +235,8 @@ export default function TaskTable({ data, assignees }: TaskTableProps) {
                           e.target.value as TaskPriority
                         )
                       }
-                      aria-label={`Change priority for ${task.title}`}
-                      className={`text-[11px] font-medium uppercase tracking-wider px-2 py-1 rounded border outline-none cursor-pointer ${getPriorityStyle(
+                      aria-label={`Priority for ${task.title}`}
+                      className={`text-[11px] font-semibold capitalize px-2.5 py-1 rounded-full border outline-none cursor-pointer ${getPriorityStyle(
                         task.priority
                       )}`}
                     >
@@ -255,24 +247,22 @@ export default function TaskTable({ data, assignees }: TaskTableProps) {
                     </select>
                   </td>
 
-                  {/* Assignee Inline Select */}
                   <td className="py-3.5 px-3">
                     <div className="flex items-center gap-2">
-                      <img
-                        src={task.assignee.avatarUrl}
-                        alt={task.assignee.name}
-                        className="w-5 h-5 rounded-full object-cover shrink-0"
-                        onError={(e) => {
-                          (e.target as HTMLElement).style.display = "none";
-                        }}
-                      />
+                      <div className="w-6 h-6 rounded-full bg-slate-900 text-white font-bold text-[10px] flex items-center justify-center shrink-0">
+                        {task.assignee.name
+                          .split(" ")
+                          .map((p) => p[0])
+                          .join("")
+                          .slice(0, 2)}
+                      </div>
                       <select
                         value={task.assignee.id}
                         onChange={(e) =>
                           handleAssigneeChange(task.id, e.target.value)
                         }
                         aria-label={`Assignee for ${task.title}`}
-                        className="text-xs bg-transparent border-0 text-slate-800 dark:text-slate-200 outline-none cursor-pointer max-w-[110px] truncate"
+                        className="text-xs bg-transparent border-0 text-slate-800 font-medium outline-none cursor-pointer max-w-[110px] truncate"
                       >
                         {assignees.map((a) => (
                           <option key={a.id} value={a.id}>
@@ -283,20 +273,18 @@ export default function TaskTable({ data, assignees }: TaskTableProps) {
                     </div>
                   </td>
 
-                  {/* Due Date */}
-                  <td className="py-3.5 px-3 text-slate-500 dark:text-slate-400">
-                    <div className="flex items-center gap-1.5">
+                  <td className="py-3.5 px-3 text-slate-500">
+                    <div className="flex items-center gap-1.5 text-[11px]">
                       <Calendar className="w-3.5 h-3.5 text-slate-400" />
                       <span>{task.dueDate}</span>
                     </div>
                   </td>
 
-                  {/* Actions */}
-                  <td className="py-3.5 px-4 text-right">
+                  <td className="py-3.5 px-5 text-right">
                     <button
                       onClick={() => handleDelete(task.id, task.title)}
                       aria-label={`Delete task ${task.title}`}
-                      className="p-1 text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 rounded transition-colors"
+                      className="p-1 text-slate-300 hover:text-rose-500 rounded transition-colors"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -308,12 +296,11 @@ export default function TaskTable({ data, assignees }: TaskTableProps) {
         </table>
       </div>
 
-      {/* Pagination Bar */}
-      <div className="px-4 py-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500 dark:text-slate-400">
+      <div className="px-5 py-3.5 border-t border-slate-100 bg-slate-50/50 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500">
         <div className="flex items-center gap-3">
           <span>
-            Page <strong className="text-slate-900 dark:text-slate-100">{data.page}</strong> of{" "}
-            <strong className="text-slate-900 dark:text-slate-100">{data.totalPages}</strong> (
+            Page <strong className="text-slate-900">{data.page}</strong> of{" "}
+            <strong className="text-slate-900">{data.totalPages}</strong> (
             {data.total} total items)
           </span>
 
@@ -323,7 +310,7 @@ export default function TaskTable({ data, assignees }: TaskTableProps) {
               value={data.limit}
               onChange={(e) => handleLimitChange(Number(e.target.value))}
               aria-label="Items per page"
-              className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 rounded px-2 py-0.5 text-xs outline-none cursor-pointer"
+              className="bg-white border border-slate-200 rounded-lg px-2 py-0.5 text-xs outline-none cursor-pointer"
             >
               <option value={10}>10</option>
               <option value={20}>20</option>
@@ -336,7 +323,7 @@ export default function TaskTable({ data, assignees }: TaskTableProps) {
           <button
             onClick={() => handlePageChange(data.page - 1)}
             disabled={data.page <= 1}
-            className="flex items-center gap-1 px-2.5 py-1 rounded bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors text-slate-700 dark:text-slate-200"
+            className="flex items-center gap-1 px-3 py-1 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors text-slate-700 font-medium"
           >
             <ChevronLeft className="w-3.5 h-3.5" />
             <span>Previous</span>
@@ -344,7 +331,7 @@ export default function TaskTable({ data, assignees }: TaskTableProps) {
           <button
             onClick={() => handlePageChange(data.page + 1)}
             disabled={data.page >= data.totalPages}
-            className="flex items-center gap-1 px-2.5 py-1 rounded bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors text-slate-700 dark:text-slate-200"
+            className="flex items-center gap-1 px-3 py-1 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors text-slate-700 font-medium"
           >
             <span>Next</span>
             <ChevronRight className="w-3.5 h-3.5" />
